@@ -7,18 +7,35 @@ import { Dimensions } from 'react-native'
 import store from './store'
 import { initAppAction } from './actions/app'
 import TypesPage from './app/types/TypesPage'
+import FavouritesPage from './app/types/FavouritesPage'
 import LeftMenu from './app/menu/LeftMenu'
 import COLORS from './constants/colors'
+import { createAppContainer, createSwitchNavigator } from 'react-navigation'
 
 const { width, height } = Dimensions.get('window')
+
+const MainNavigator = createSwitchNavigator(
+	{
+		Home: { screen: TypesPage },
+		Favourites: { screen: FavouritesPage },
+	},
+	{
+		defaultNavigationOptions: {
+			headerStyle: {
+				display: 'none',
+			},
+		},
+	}
+)
+
+const ScreenNavigator = createAppContainer(MainNavigator)
 
 const Container = () => {
 	const dispatch = useDispatch()
 	dispatch(initAppAction())
 	return (
 		<View style={styles.container}>
-			<LeftMenu />
-			<TypesPage />
+			<ScreenNavigator />
 		</View>
 	)
 }
@@ -40,5 +57,6 @@ const styles = StyleSheet.create({
 		paddingTop: Constants.statusBarHeight,
 		backgroundColor: COLORS.mainDark,
 		overflow: 'hidden',
+		width,
 	},
 })

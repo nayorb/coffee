@@ -7,6 +7,8 @@ const { height, width } = Dimensions.get('window')
 import COLORS from '../constants/colors'
 import Icon from './Icon'
 
+const TILE_SIZE = width / 4
+
 const Tile = ({ title, icon, isSelected, onClick, isFavourite }) => {
 	return (
 		<TouchableOpacity
@@ -42,11 +44,10 @@ const styles = StyleSheet.create({
 		backgroundColor: COLORS.creamLight,
 		justifyContent: 'center',
 		alignItems: 'center',
-		width: width / 4,
-		height: width / 4,
+		width: TILE_SIZE,
+		height: TILE_SIZE,
 		borderColor: COLORS.gray,
 		borderWidth: 1,
-		position: 'relative',
 	},
 	title: {
 		color: COLORS.black,

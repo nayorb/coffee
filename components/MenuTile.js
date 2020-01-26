@@ -3,10 +3,10 @@ import { Image, TouchableOpacity, StyleSheet } from 'react-native'
 
 import COLORS from '../constants/colors'
 
-const MenuTile = ({ size, onClick, icon }) => {
+const MenuTile = ({ size, onClick, icon, style }) => {
 	return (
 		<TouchableOpacity
-			style={{ ...styles.container, width: size, height: size }}
+			style={{ ...styles.container, width: size, height: size, ...style }}
 			onPress={onClick}
 		>
 			{icon}

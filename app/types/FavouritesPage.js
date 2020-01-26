@@ -5,16 +5,16 @@ import { connect, useSelector, useDispatch } from 'react-redux'
 import { toggleMenuAction, selectCoffeeAction } from '../../actions/app'
 import Header from '../../components/Header'
 import CoffeeTypesGrid from './CoffeeTypesGrid'
-import CoffeeDetail from './CoffeeDetail'
 import LeftMenu from '../menu/LeftMenu'
 
-const TypesPage = ({ navigation }) => {
+const FavouritesPage = ({ navigation }) => {
 	const selectedCoffee = useSelector(state => state.app.selectedCoffee)
-	const isMenuOpened = useSelector(state => state.app.isMenuOpened)
+	const dispatch = useDispatch()
 
 	const coffees = useSelector(state => state.coffee)
+	const storeFavourites = useSelector(state => state.favourites)
 
-	const dispatch = useDispatch()
+	const favourites = coffees.filter(c => storeFavourites.includes(c.title))
 
 	const setSelectedCoffee = coffee => dispatch(selectCoffeeAction(coffee))
 
@@ -23,12 +23,11 @@ const TypesPage = ({ navigation }) => {
 			<LeftMenu navigation={navigation} focus={navigation.state.key} />
 			<Header
 				menuClicked={() => dispatch(toggleMenuAction())}
-				isMenuOpened={isMenuOpened}
-				title='Coffee types'
+				title='Favourites'
 			/>
 			<ScrollView>
 				<CoffeeTypesGrid
-					coffees={coffees}
+					coffees={favourites}
 					selectedCoffee={selectedCoffee}
 					selectNewCoffee={c => setSelectedCoffee(c)}
 				/>
@@ -37,7 +36,7 @@ const TypesPage = ({ navigation }) => {
 	)
 }
 
-export default TypesPage
+export default FavouritesPage
 
 const styles = StyleSheet.create({
 	container: {},

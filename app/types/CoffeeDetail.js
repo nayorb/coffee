@@ -1,10 +1,11 @@
-import React from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import {
 	Text,
 	ImageBackground,
 	View,
 	StyleSheet,
-	ScrollView,
+	Animated,
+	LayoutChangeEvent,
 } from 'react-native'
 import { useSelector, useDispatch } from 'react-redux'
 import { Dimensions } from 'react-native'
@@ -17,19 +18,30 @@ const { width, height } = Dimensions.get('window')
 
 const FAVOURITE_ICON_SIZE = 48
 
-const CoffeeDetail = ({ selectedCoffeeName }) => {
+const CoffeeDetail = ({ coffee, isSelected }) => {
+	const [heightAnim] = useState(new Animated.Value(0))
 	const dispatch = useDispatch()
-	const selectedCoffee =
-		useSelector(state =>
-			state.coffee.find(c => c.title === selectedCoffeeName)
-		) || {}
+
 	const isInFavourites =
-		useSelector(state =>
-			state.favourites.findIndex(f => f === selectedCoffeeName)
-		) > -1
+		useSelector(state => state.favourites.findIndex(f => f === coffee.title)) >
+		-1
+
+	useEffect(() => {
+		Animated.timing(heightAnim, {
+			toValue: isSelected ? 1 : 0,
+			duration: 250,
+		}).start()
+	}, [isSelected])
+
+	const heightValue = heightAnim.interpolate({
+		inputRange: [0, 1],
+		outputRange: [0, 1],
+	})
 
 	return (
-		<ScrollView style={styles.container}>
+		<Animated.View
+			style={{ ...styles.container, transform: [{ scaleY: heightValue }] }}
+		>
 			<View style={styles.detailHeader}>
 				<ClickableIcon
 					style={styles.favouriteIcon}
@@ -37,14 +49,14 @@ const CoffeeDetail = ({ selectedCoffeeName }) => {
 					size={FAVOURITE_ICON_SIZE}
 					type={isInFavourites ? 'ios-filled' : 'ios'}
 					icon='like'
-					onClick={() => dispatch(toggleFavouriteAction(selectedCoffee))}
+					onClick={() => dispatch(toggleFavouriteAction(coffee))}
 				/>
 			</View>
-			<ImageBackground source={selectedCoffee.detail} style={styles.image} />
+			<ImageBackground source={coffee.detail} style={styles.image} />
 			<View style={styles.detail}>
-				<Text style={styles.detailText}>{selectedCoffee.detailText}</Text>
+				<Text style={styles.detailText}>{coffee.detailText}</Text>
 			</View>
-		</ScrollView>
+		</Animated.View>
 	)
 }
 
@@ -54,6 +66,7 @@ const styles = StyleSheet.create({
 	container: {
 		backgroundColor: COLORS.mainDark,
 		position: 'relative',
+		overflow: 'hidden',
 	},
 	image: {
 		width: width,
