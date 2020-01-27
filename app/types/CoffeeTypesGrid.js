@@ -13,29 +13,54 @@ const mod = a => {
 	return (a * 2 - 2 * (a % 4)) / 2 + 4
 }
 
-const CoffeeTypesGrid = ({ selectedCoffee, selectNewCoffee, coffees }) => {
+const CoffeeTypesGrid = ({ selectNewCoffee, coffees }) => {
 	const favourites = useSelector(state => state.favourites)
-	const index = coffees.findIndex(c => c.title === selectedCoffee)
-	const selectedCoffeeObject = coffees.find(c => c.title === selectedCoffee)
+	const selectedCoffeeName = useSelector(state => state.app.selectedCoffee)
+	const index = coffees.findIndex(c => c.title === selectedCoffeeName)
+	const selectedCoffee = coffees.find(c => c.title === selectedCoffeeName)
 
 	const isInFavourites = c => favourites.includes(c.title)
 
 	let layoutArray = coffees.map((coffee, i) => (
-		<Tile
-			key={coffee.title}
-			title={coffee.title}
-			icon={coffee.icon}
-			isFavourite={isInFavourites(coffee)}
-			isSelected={coffee.title === selectedCoffee}
-			onClick={() => selectNewCoffee(coffee.title)}
-		/>
+		<>
+			<Tile
+				key={coffee.title}
+				title={coffee.title}
+				icon={coffee.icon}
+				isFavourite={isInFavourites(coffee)}
+				isSelected={coffee.title === selectedCoffeeName}
+				onClick={() => selectNewCoffee(coffee.title)}
+			/>
+			{(i + 1) % 4 === 0 && i !== 0 ? (
+				<>
+					{coffees.map((coffee, idx) =>
+						idx <= i && idx > i - 4 ? (
+							<CoffeeDetail
+								coffee={coffee}
+								isSelected={coffee === selectedCoffee}
+							/>
+						) : (
+							<></>
+						)
+					)}
+				</>
+			) : null}
+		</>
 	))
 
-	if (selectedCoffee !== '') {
-		layoutArray.splice(
-			mod(index),
-			0,
-			<CoffeeDetail coffee={selectedCoffeeObject} isSelected={true} />
+	if (coffees.length % 4 !== 0) {
+		const diff = coffees.length - (coffees.length % 4)
+		layoutArray = layoutArray.concat(
+			coffees.map((coffee, idx) =>
+				idx >= diff ? (
+					<CoffeeDetail
+						coffee={coffee}
+						isSelected={coffee === selectedCoffee}
+					/>
+				) : (
+					<></>
+				)
+			)
 		)
 	}
 

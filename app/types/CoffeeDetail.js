@@ -21,6 +21,7 @@ const FAVOURITE_ICON_SIZE = 48
 const CoffeeDetail = ({ coffee, isSelected }) => {
 	const [heightAnim] = useState(new Animated.Value(0))
 	const dispatch = useDispatch()
+	const ref = element => {}
 
 	const isInFavourites =
 		useSelector(state => state.favourites.findIndex(f => f === coffee.title)) >
@@ -35,26 +36,26 @@ const CoffeeDetail = ({ coffee, isSelected }) => {
 
 	const heightValue = heightAnim.interpolate({
 		inputRange: [0, 1],
-		outputRange: [0, 1],
+		outputRange: [0, 700],
 	})
 
 	return (
-		<Animated.View
-			style={{ ...styles.container, transform: [{ scaleY: heightValue }] }}
-		>
-			<View style={styles.detailHeader}>
-				<ClickableIcon
-					style={styles.favouriteIcon}
-					color={COLORS.creamLight}
-					size={FAVOURITE_ICON_SIZE}
-					type={isInFavourites ? 'ios-filled' : 'ios'}
-					icon='like'
-					onClick={() => dispatch(toggleFavouriteAction(coffee))}
-				/>
-			</View>
-			<ImageBackground source={coffee.detail} style={styles.image} />
-			<View style={styles.detail}>
-				<Text style={styles.detailText}>{coffee.detailText}</Text>
+		<Animated.View style={{ ...styles.container, height: heightValue }}>
+			<View ref={ref}>
+				<View style={styles.detailHeader}>
+					<ClickableIcon
+						style={styles.favouriteIcon}
+						color={COLORS.creamLight}
+						size={FAVOURITE_ICON_SIZE}
+						type={isInFavourites ? 'ios-filled' : 'ios'}
+						icon='like'
+						onClick={() => dispatch(toggleFavouriteAction(coffee))}
+					/>
+				</View>
+				<ImageBackground source={coffee.detail} style={styles.image} />
+				<View style={styles.detail}>
+					<Text style={styles.detailText}>{coffee.detailText}</Text>
+				</View>
 			</View>
 		</Animated.View>
 	)
